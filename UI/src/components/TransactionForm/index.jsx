@@ -5,7 +5,9 @@ const TransactionForm = ({ showModal, toggleModal, month, addTransaction }) => {
   const [type, setType] = useState(TRANSACTION_TYPES.INCOME);
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
-  const [transactionDate, setTransactionDate] = useState("");
+  const [transactionDate, setTransactionDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -42,8 +44,8 @@ const TransactionForm = ({ showModal, toggleModal, month, addTransaction }) => {
           </div>
           <form onSubmit={handleSubmit}>
             <div className="modal-body">
-              <label>
-                Type:
+              <div className="mb-3">
+                <label className="form-label">Type:</label>
                 <select
                   value={type}
                   onChange={(e) => setType(e.target.value)}
@@ -52,35 +54,39 @@ const TransactionForm = ({ showModal, toggleModal, month, addTransaction }) => {
                   <option value={TRANSACTION_TYPES.INCOME}>Income</option>
                   <option value={TRANSACTION_TYPES.EXPENSE}>Expense</option>
                 </select>
-              </label>
-              <label>
-                Title:
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Title:</label>
                 <input
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   className="form-control"
                 />
-              </label>
-              <label>
-                Amount:
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Amount:</label>
                 <input
                   type="number"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  className="form-control "
+                  className="form-control"
                 />
-              </label>
-              <label>
-                Date:
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Date:</label>
                 <input
                   type="date"
                   value={transactionDate}
                   onChange={(e) => setTransactionDate(e.target.value)}
                   className="form-control"
                 />
-              </label>
+              </div>
             </div>
+
             <div className="modal-footer">
               <button
                 type="button"
