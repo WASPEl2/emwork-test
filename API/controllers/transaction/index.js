@@ -13,8 +13,8 @@ const getTransactions = async (req, res) => {
 const createTransaction = async (req, res) => {
   try {
     const transaction = req.body;
-    const id = await transactionModel.createTransaction(transaction);
-    res.json({ id });
+    const result = await transactionModel.createTransaction(transaction);
+    res.json(result);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

@@ -1,6 +1,10 @@
 import React from "react";
 
-const TransactionList = ({ transactions, removeTransaction }) => {
+const TransactionList = ({
+  transactions,
+  removeTransaction,
+  editTransaction,
+}) => {
   return (
     <div>
       <table className="table table-striped table-bordered">
@@ -34,9 +38,16 @@ const TransactionList = ({ transactions, removeTransaction }) => {
                 {new Date(transaction.created_at).toLocaleDateString("en-GB")}
               </td>
               <td>
-                {new Date(transaction.updated_at).toLocaleDateString("en-GB")}
+                {new Date(transaction.updated_at).toLocaleDateString("en-GB") ||
+                  "N/A"}
               </td>
               <td>
+                <button
+                  className="btn btn-info btn-sm text-white me-2"
+                  onClick={() => editTransaction(transaction.id)}
+                >
+                  Update
+                </button>
                 <button
                   className="btn btn-danger btn-sm"
                   onClick={() => removeTransaction(transaction.id)}

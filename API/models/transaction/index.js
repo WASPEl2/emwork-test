@@ -17,7 +17,14 @@ const createTransaction = (transaction) => {
     const sql = `INSERT INTO transactions (type, title, amount, transaction_date) VALUES (?, ?, ?, ?)`;
     db.query(sql, [type, title, amount, transaction_date], (err, result) => {
       if (err) return reject(err);
-      resolve(result.insertId);
+      resolve({
+        id: result.insertId,
+        type,
+        title,
+        amount,
+        transaction_date,
+        created_at: new Date(),
+      });
     });
   });
 };

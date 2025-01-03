@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useTransactions } from "./hooks/useTransactions";
 import TransactionForm from "./components/TransactionForm";
 import TransactionList from "./components/TransactionList";
@@ -13,16 +13,32 @@ const App = () => {
     return `${year}-${month}`;
   });
   const [showModal, setShowModal] = useState(false);
+  const [transactionToEdit, setTransactionToEdit] = useState(null);
 
-  const { transactions, report, addTransaction, removeTransaction, error } =
-    useTransactions(monthYear);
+  const {
+    transactions,
+    report,
+    addTransaction,
+    updateTransaction,
+    removeTransaction,
+    error,
+  } = useTransactions(monthYear);
 
   const handleMonthChange = (e) => {
     const newMonthYear = e.target.value;
     setMonthYear(newMonthYear);
   };
 
-  const toggleModal = () => setShowModal(!showModal);
+  const toggleModal = () => {
+    setShowModal(!showModal);
+    setTransactionToEdit(null);
+  };
+
+  const handleEditTransaction = (id) => {
+    const transaction = transactions.find((t) => t.id === id);
+    setTransactionToEdit(transaction);
+    setShowModal(true);
+  };
 
   return (
     <div className="m-3">
@@ -39,17 +55,19 @@ const App = () => {
         </button>
       </div>
 
-      {/* Modal */}
       <TransactionForm
         showModal={showModal}
         toggleModal={toggleModal}
         month={monthYear}
         addTransaction={addTransaction}
+        updateTransaction={updateTransaction}
+        transactionToEdit={transactionToEdit}
       />
 
       <TransactionList
         transactions={transactions}
         removeTransaction={removeTransaction}
+        editTransaction={handleEditTransaction}
       />
       <Report report={report} />
     </div>

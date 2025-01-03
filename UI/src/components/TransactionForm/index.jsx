@@ -1,7 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TRANSACTION_TYPES } from "../../constants/types";
 
-const TransactionForm = ({ showModal, toggleModal, month, addTransaction }) => {
+const TransactionForm = ({
+  showModal,
+  toggleModal,
+  month,
+  addTransaction,
+  updateTransaction,
+  transactionToEdit,
+}) => {
   const [type, setType] = useState(TRANSACTION_TYPES.INCOME);
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
@@ -9,17 +16,43 @@ const TransactionForm = ({ showModal, toggleModal, month, addTransaction }) => {
     new Date().toISOString().split("T")[0]
   );
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    addTransaction({
-      type,
-      title,
-      amount,
-      transaction_date: transactionDate,
-    });
+  useEffect(() => {
+    if (transactionToEdit) {
+      setType(transactionToEdit.type);
+      setTitle(transactionToEdit.title);
+      setAmount(transactionToEdit.amount);
+      setTransactionDate(transactionToEdit.transaction_date);
+    } else {
+      resetForm();
+    }
+  }, [transactionToEdit]);
+
+  const resetForm = () => {
+    setType(TRANSACTION_TYPES.INCOME);
     setTitle("");
     setAmount("");
-    setTransactionDate("");
+    setTransactionDate(new Date().toISOString().split("T")[0]);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (transactionToEdit) {
+      updateTransaction({
+        ...transactionToEdit,
+        type,
+        title,
+        amount,
+        transaction_date: transactionDate,
+      });
+    } else {
+      addTransaction({
+        type,
+        title,
+        amount,
+        transaction_date: transactionDate,
+      });
+    }
+    resetForm();
     toggleModal();
   };
 
@@ -33,7 +66,9 @@ const TransactionForm = ({ showModal, toggleModal, month, addTransaction }) => {
       <div className="modal-dialog">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">Add Transaction</h5>
+            <h5 className="modal-title">
+              {transactionToEdit ? "Update Transaction" : "Add Transaction"}
+            </h5>
             <button
               type="button"
               className="btn-close"
@@ -55,7 +90,6 @@ const TransactionForm = ({ showModal, toggleModal, month, addTransaction }) => {
                   <option value={TRANSACTION_TYPES.EXPENSE}>Expense</option>
                 </select>
               </div>
-
               <div className="mb-3">
                 <label className="form-label">Title:</label>
                 <input
@@ -65,7 +99,6 @@ const TransactionForm = ({ showModal, toggleModal, month, addTransaction }) => {
                   className="form-control"
                 />
               </div>
-
               <div className="mb-3">
                 <label className="form-label">Amount:</label>
                 <input
@@ -75,7 +108,6 @@ const TransactionForm = ({ showModal, toggleModal, month, addTransaction }) => {
                   className="form-control"
                 />
               </div>
-
               <div className="mb-3">
                 <label className="form-label">Date:</label>
                 <input
@@ -86,7 +118,6 @@ const TransactionForm = ({ showModal, toggleModal, month, addTransaction }) => {
                 />
               </div>
             </div>
-
             <div className="modal-footer">
               <button
                 type="button"
@@ -96,7 +127,7 @@ const TransactionForm = ({ showModal, toggleModal, month, addTransaction }) => {
                 Close
               </button>
               <button type="submit" className="btn btn-primary">
-                Save
+                {transactionToEdit ? "Update" : "Save"}
               </button>
             </div>
           </form>
